@@ -263,7 +263,7 @@ public class ChaincodeManager {
             }).get(100,TimeUnit.SECONDS);
 
             resultMap.put("code", "success");
-            resultMap.put("data", resultAsString);
+            //resultMap.put("data", resultAsString);
             return resultMap;
         }
     }
@@ -318,52 +318,40 @@ public class ChaincodeManager {
     }
 
     /**
-     * 获取交易历史记录
+     * 查询块
      *
-     * @param fcn
-     *            方法名
-     * @param args
-     *            参数数组
      * @return
      * @throws InvalidArgumentException
      * @throws ProposalException
-     * @throws IOException
-     * @throws TransactionException
-     * @throws CryptoException
-     * @throws InvalidKeySpecException
-     * @throws NoSuchProviderException
-     * @throws NoSuchAlgorithmException
      */
-    public Map<String, String> queryHistoryTransactionByKey(String fcn, String[] args) throws InvalidArgumentException, ProposalException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, CryptoException, TransactionException, IOException {
-        Map<String, String> resultMap = new HashMap<>();
-        String payload = "";
-        QueryByChaincodeRequest queryByChaincodeRequest = client.newQueryProposalRequest();
-        queryByChaincodeRequest.setArgs(args);
-        queryByChaincodeRequest.setFcn(fcn);
-        queryByChaincodeRequest.setChaincodeID(chaincodeID);
-
-        Map<String, byte[]> tm2 = new HashMap<>();
-        tm2.put("HyperLedgerFabric", "QueryByChaincodeRequest:JavaSDK".getBytes(UTF_8));
-        tm2.put("method", "QueryByChaincodeRequest".getBytes(UTF_8));
-        queryByChaincodeRequest.setTransientMap(tm2);
-
-        Collection<ProposalResponse> queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
-        for (ProposalResponse proposalResponse : queryProposals) {
-            if (!proposalResponse.isVerified() || proposalResponse.getStatus() != ProposalResponse.Status.SUCCESS) {
-                log.debug("Failed query proposal from peer " + proposalResponse.getPeer().getName() + " status: " + proposalResponse.getStatus() + ". Messages: "
-                        + proposalResponse.getMessage() + ". Was verified : " + proposalResponse.isVerified());
-                resultMap.put("code", "error");
-                resultMap.put("data", "Failed query proposal from peer " + proposalResponse.getPeer().getName() + " status: " + proposalResponse.getStatus() + ". Messages: "
-                        + proposalResponse.getMessage() + ". Was verified : " + proposalResponse.isVerified());
-            } else {
-                payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
-                log.debug("Query payload from peer: " + proposalResponse.getPeer().getName());
-                log.debug("" + payload);
-                resultMap.put("code", "success");
-                resultMap.put("data", payload);
-            }
-        }
-        return resultMap;
+    public BlockInfo queryBlockByNumber(Long blockNumber) throws ProposalException, InvalidArgumentException {
+        BlockInfo queryProposals = channel.queryBlockByNumber(blockNumber);
+        return queryProposals;
     }
+
+    /**
+     * 查询链码信息
+     *
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ProposalException
+     */
+    public BlockchainInfo queryBlockchainInfo() throws ProposalException, InvalidArgumentException {
+        BlockchainInfo blockchainInfo = channel.queryBlockchainInfo();
+        return blockchainInfo;
+    }
+
+    /**
+     * 查询链码信息
+     *
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ProposalException
+     */
+    public TransactionInfo queryTransactionByID(String txId) throws ProposalException, InvalidArgumentException {
+        TransactionInfo transactionInfo = channel.queryTransactionByID(txId);
+        return transactionInfo;
+    }
+
 
 }

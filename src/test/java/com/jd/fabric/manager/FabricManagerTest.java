@@ -1,5 +1,6 @@
-package com.jd.fabric.dashboard.manager;
+package com.jd.fabric.manager;
 
+import com.jd.fabric.dashboard.manager.*;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
@@ -10,30 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Map;
 
 
 public class FabricManagerTest {
 
-    private ChaincodeManager manager;
+    private ChaincodeManager chaincodeManager;
 
-    private static FabricManagerTest instance = null;
-
-    public static FabricManagerTest obtain()
-            throws CryptoException, InvalidArgumentException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, TransactionException, IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (null == instance) {
-            synchronized (FabricManager.class) {
-                if (null == instance) {
-                    instance = new FabricManagerTest();
-                }
-            }
-        }
-        return instance;
-    }
-
-    private FabricManagerTest()
+    public FabricManagerTest()
             throws CryptoException, InvalidArgumentException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, TransactionException, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        manager = new ChaincodeManager(getConfig());
+        chaincodeManager = new ChaincodeManager(getConfig());
     }
 
     /**
@@ -41,8 +27,8 @@ public class FabricManagerTest {
      *
      * @return 节点服务器管理器
      */
-    public ChaincodeManager getManager() {
-        return manager;
+    public ChaincodeManager getChaincodeManager() {
+        return chaincodeManager;
     }
 
     /**
@@ -145,54 +131,6 @@ public class FabricManagerTest {
         System.out.println("directory = " + directory.getPath());
 
         return directory.getPath() + "/crypto-config/";
-    }
-
-
-
-    public static void main(String[] a){
-        query();
-        invoke();
-        query();
-    }
-
-    public static void query(){
-        try{
-            ChaincodeManager manage = FabricManagerTest.obtain().getManager();
-            Map<String ,String> queryResult=manage.invoke("query",new String[] {"a"});
-            System.out.println(String.valueOf(queryResult));
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-
-        }
-    }
-
-    public static void invoke(){
-        try{
-            ChaincodeManager manage = FabricManagerTest.obtain().getManager();
-            Map<String, String> invokeResult = manage.invoke("invoke",new String[] {"a", "b", "1"});
-            System.out.println(String.valueOf(invokeResult));
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-
-        }
-
-
-    }
-
-    public static void queryHistory(){
-        try{
-            ChaincodeManager manage = FabricManagerTest.obtain().getManager();
-            Map<String ,String> queryResult=manage.invoke("queryHistoryTransactionByKey",new String[] {"a"});
-            System.out.println(String.valueOf(queryResult));
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-
-        }
-
-
     }
 
 }

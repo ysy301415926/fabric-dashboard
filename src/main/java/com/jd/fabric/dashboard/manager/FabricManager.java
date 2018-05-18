@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class FabricManager {
 
-    private ChaincodeManager manager;
+    private ChaincodeManager chaincodeManager;
 
     private static Map<String, Object> configMap;
 
@@ -35,7 +35,7 @@ public class FabricManager {
 
     private FabricManager()
             throws CryptoException, InvalidArgumentException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, TransactionException, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        manager = new ChaincodeManager(getConfig());
+        chaincodeManager = new ChaincodeManager(getConfig());
     }
 
     /**
@@ -43,8 +43,8 @@ public class FabricManager {
      *
      * @return 节点服务器管理器
      */
-    public ChaincodeManager getManager() {
-        return manager;
+    public ChaincodeManager getChaincodeManager() {
+        return chaincodeManager;
     }
 
     /**
