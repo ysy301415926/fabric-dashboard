@@ -107,7 +107,8 @@ public class FabricManagerTest {
     private String getChannleArtifactsPath() {
       //  String directorys = FabricManager.class.getClassLoader().getResource("fabric").getFile();
         //String directorys = "/usr/local/pandora-sdk/pandorasdk-sdk/src/main/resources/fabric";
-        String directorys = "C:/WorkSpaces/Projects/project/fabric-man/fabric-dashboard/src/main/resources/fabric";
+        //String directorys = "C:/WorkSpaces/Projects/project/fabric-man/fabric-dashboard/src/main/resources/fabric";
+        String directorys = "/home/leo/project/my-fabric/fabric-dashboard/src/main/resources/fabric";
         // String directorys = "E:\\demo\\pandora-sdk\\fabric-sdk-java\\src\\resources\\fabric";
         System.out.println("directorys = " + directorys);
         File directory = new File(directorys);
@@ -123,8 +124,8 @@ public class FabricManagerTest {
     private String getCryptoConfigPath() {
        // String directorys = FabricManager.class.getClassLoader().getResource("fabric").getFile();
        //String directorys = "/usr/local/pandora-sdk/pandorasdk-sdk/src/main/resources/fabric";
-        String directorys = "C:/WorkSpaces/Projects/project/fabric-man/fabric-dashboard/src/main/resources/fabric";
-
+        //String directorys = "C:/WorkSpaces/Projects/project/fabric-man/fabric-dashboard/src/main/resources/fabric";
+        String directorys = "/home/leo/project/my-fabric/fabric-dashboard/src/main/resources/fabric";
         // String directorys = "E:\\demo\\pandora-sdk\\fabric-sdk-java\\src\\resources\\fabric";
         System.out.println("directorys = " + directorys);
         File directory = new File(directorys);
