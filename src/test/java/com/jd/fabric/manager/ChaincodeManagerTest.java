@@ -1,11 +1,16 @@
 package com.jd.fabric.manager;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.jd.fabric.dashboard.manager.ChaincodeManager;
+import org.apache.commons.codec.binary.Hex;
+import org.hyperledger.fabric.protos.ledger.rwset.kvrwset.KvRwset;
 import org.hyperledger.fabric.sdk.BlockInfo;
 import org.hyperledger.fabric.sdk.BlockchainInfo;
 import org.hyperledger.fabric.sdk.TransactionInfo;
+import org.hyperledger.fabric.sdk.TxReadWriteSetInfo;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -30,7 +35,7 @@ public class ChaincodeManagerTest {
         try{
             FabricManagerTest fabricManagerTest = new FabricManagerTest();
             ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
-            Map<String, String> invokeResult = chaincodeManager.invoke("invoke",new String[] {"a", "b", "1"});
+            Map<String, String> invokeResult = chaincodeManager.invoke("invoke",new String[] {"a", "b", "5"});
             System.out.println(String.valueOf(invokeResult));
         }catch(Exception e){
             e.printStackTrace();
@@ -43,14 +48,67 @@ public class ChaincodeManagerTest {
         try{
             FabricManagerTest fabricManagerTest = new FabricManagerTest();
             ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
-            BlockInfo blockInfo = chaincodeManager.queryBlockByNumber(17L);
-            System.out.println(blockInfo.getBlockNumber());
-            System.out.println(blockInfo.getBlock());
-            System.out.println(new String(blockInfo.getDataHash(),"utf-8"));
-            System.out.println("-----------------------------------------");
-            System.out.println(new String(blockInfo.getBlock().getData().getData(0).toByteArray(),"utf-8"));
+            BlockInfo blockInfo = chaincodeManager.queryBlockByNumber(20L);
+            System.out.println("getNumber---------------------------------------");
+            System.out.println(blockInfo.getBlock().getHeader().getNumber());
+            System.out.println("getNumber---------------------------------------");
 
-            //2129d1123d27852607d52c6ef44a0088dd9da1b1d6f204fab837ca12fa065a85
+            System.out.println("getPreviousHash---------------------------------------");
+            System.out.println(Hex.encodeHexString(blockInfo.getPreviousHash()));
+            System.out.println("getPreviousHash---------------------------------------");
+
+            System.out.println("getDataHash---------------------------------------");
+            System.out.println(Hex.encodeHexString(blockInfo.getDataHash()));
+            System.out.println("getDataHash---------------------------------------");
+            Iterator<BlockInfo.EnvelopeInfo> iterable = blockInfo.getEnvelopeInfos().iterator();
+            while(iterable.hasNext()) {
+                BlockInfo.EnvelopeInfo envelopeInfo = iterable.next();
+                String txID = envelopeInfo.getTransactionID();
+                System.out.println(txID);
+                BlockInfo.TransactionEnvelopeInfo transactionEnvelopeInfo = (BlockInfo.TransactionEnvelopeInfo) envelopeInfo;
+                for (BlockInfo.TransactionEnvelopeInfo.TransactionActionInfo transactionActionInfo : transactionEnvelopeInfo.getTransactionActionInfos()) {
+                    TxReadWriteSetInfo rwsetInfo = transactionActionInfo.getTxReadWriteSet();
+                    if (null != rwsetInfo) {
+
+                        for (TxReadWriteSetInfo.NsRwsetInfo nsRwsetInfo : rwsetInfo.getNsRwsetInfos()) {
+                            final String namespace = nsRwsetInfo.getNamespace();
+                            KvRwset.KVRWSet rws = null;
+                            try {
+                                rws = nsRwsetInfo.getRwset();
+                            } catch (InvalidProtocolBufferException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            int rs = -1;
+                            for (KvRwset.KVRead readList : rws.getReadsList()) {
+                                rs++;
+                                System.out.println("readList---------------------------------------");
+                                System.out.println(namespace);
+                                System.out.println(rs);
+                                System.out.println(readList.getKey());
+                                System.out.println(readList.getVersion().getBlockNum());
+                                System.out.println(readList.getVersion().getTxNum());
+                                System.out.println("readList---------------------------------------");
+                            }
+
+                            rs = -1;
+                            for (KvRwset.KVWrite writeList : rws.getWritesList()) {
+                                rs++;
+                                System.out.println("writeList---------------------------------------");
+                                System.out.println(namespace);
+                                System.out.println(rs);
+                                System.out.println(writeList.getKey());
+                                System.out.println(new String(writeList.getValue().toByteArray(), "UTF-8"));
+                                System.out.println("writeList---------------------------------------");
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+
 
         }catch(Exception e){
             e.printStackTrace();
@@ -74,13 +132,14 @@ public class ChaincodeManagerTest {
         }
     }
 
+
     @Test
     public  void queryTransactionByID(){
         try{
             FabricManagerTest fabricManagerTest = new FabricManagerTest();
             ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
             TransactionInfo transactionInfo = chaincodeManager.queryTransactionByID("2129d1123d27852607d52c6ef44a0088dd9da1b1d6f204fab837ca12fa065a85");
-            System.out.println(new String(transactionInfo.getEnvelope().toByteArray(),"utf-8"));
+            System.out.println(transactionInfo.getEnvelope());
 
         }catch(Exception e){
             e.printStackTrace();
@@ -88,5 +147,9 @@ public class ChaincodeManagerTest {
 
         }
     }
+
+
+
+
 }
 
