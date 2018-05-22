@@ -342,7 +342,7 @@ public class ChaincodeManager {
     }
 
     /**
-     * 查询链码信息
+     * 查询事物信息
      *
      * @return
      * @throws InvalidArgumentException
@@ -351,6 +351,38 @@ public class ChaincodeManager {
     public TransactionInfo queryTransactionByID(String txId) throws ProposalException, InvalidArgumentException {
         TransactionInfo transactionInfo = channel.queryTransactionByID(txId);
         return transactionInfo;
+    }
+
+    /**
+     * 查询channels信息
+     *
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ProposalException
+     */
+    public Set<String> queryChannels() throws ProposalException, InvalidArgumentException {
+
+        Set<String> channels = new HashSet<>();
+        Iterator<Peer> peers = channel.getPeers().iterator();
+        while (peers.hasNext()) {
+            Peer peer = peers.next();
+            channels.addAll(client.queryChannels(peer));
+        }
+        return channels;
+    }
+
+    /**
+     * 查询channel信息
+     *
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ProposalException
+     */
+    public Channel getChannel(String channelName) throws ProposalException, InvalidArgumentException {
+
+        Set<String> channels = new HashSet<>();
+        Channel channel = client.getChannel(channelName);
+        return channel;
     }
 
 

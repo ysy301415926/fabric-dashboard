@@ -4,18 +4,18 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.jd.fabric.dashboard.manager.ChaincodeManager;
 import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.protos.ledger.rwset.kvrwset.KvRwset;
-import org.hyperledger.fabric.sdk.BlockInfo;
-import org.hyperledger.fabric.sdk.BlockchainInfo;
-import org.hyperledger.fabric.sdk.TransactionInfo;
-import org.hyperledger.fabric.sdk.TxReadWriteSetInfo;
+import org.hyperledger.fabric.sdk.*;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 
 public class ChaincodeManagerTest {
 
+
+    //chaincode------------------------------------------------------------------------------------
     @Test
     public void query(){
         try{
@@ -43,6 +43,69 @@ public class ChaincodeManagerTest {
         }
     }
 
+    //chaincode------------------------------------------------------------------------------------
+
+
+    //channel------------------------------------------------------------------------------------
+
+    //获取所有channels的名字
+    @Test
+    public  void queryChannels(){
+        try{
+            FabricManagerTest fabricManagerTest = new FabricManagerTest();
+            ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
+            Set<String> channels = chaincodeManager.queryChannels();
+
+            for(String channel:channels){
+                System.out.println(channel);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    //获取当前channel信息
+    @Test
+    public  void getChannel(){
+        try{
+            FabricManagerTest fabricManagerTest = new FabricManagerTest();
+            ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
+            Channel channel = chaincodeManager.getChannel("mychannel");
+            System.out.print(channel.getName());
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+
+    //channel------------------------------------------------------------------------------------
+
+
+    //blockchain------------------------------------------------------------------------------------
+
+    //获取区块链高度
+    @Test
+    public  void queryBlockchainInfo(){
+        try{
+            FabricManagerTest fabricManagerTest = new FabricManagerTest();
+            ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
+            BlockchainInfo blockchainInfo = chaincodeManager.queryBlockchainInfo();
+            System.out.println(blockchainInfo.getBlockchainInfo());
+
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+
+        }
+    }
+    //blockchain------------------------------------------------------------------------------------
+
+
+    //block------------------------------------------------------------------------------------
+
+    //根据高度获取块信息
     @Test
     public  void queryBlockByNumber(){
         try{
@@ -117,22 +180,9 @@ public class ChaincodeManagerTest {
         }
     }
 
-    @Test
-    public  void queryBlockchainInfo(){
-        try{
-            FabricManagerTest fabricManagerTest = new FabricManagerTest();
-            ChaincodeManager chaincodeManager = fabricManagerTest.getChaincodeManager();
-            BlockchainInfo blockchainInfo = chaincodeManager.queryBlockchainInfo();
-            System.out.println(blockchainInfo.getBlockchainInfo());
+    //block------------------------------------------------------------------------------------
 
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-
-        }
-    }
-
-
+    //根据txid获取事物
     @Test
     public  void queryTransactionByID(){
         try{
